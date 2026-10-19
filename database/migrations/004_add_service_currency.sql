@@ -1,0 +1,2 @@
+ALTER TABLE services
+    ADD COLUMN currency CHAR(3) DEFAULT NULL AFTER cost;

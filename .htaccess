@@ -1,0 +1,20 @@
+Options -Indexes
+DirectoryIndex index.php
+
+RewriteEngine On
+
+# Canonicalize URLs that explicitly expose the internal public directory.
+# The request capture preserves either a subdirectory deployment or domain root.
+RewriteCond %{THE_REQUEST} \s/+(.*/)?public(?:/([^?\s]*))?[?\s] [NC]
+RewriteRule ^public(?:/.*)?$ /%1%2 [R=302,L,NE]
+
+# Never expose application source, configuration, documentation, or tooling.
+RewriteRule ^(?:config|src|views|database|docs|cron|logs|resources|tests|vendor|node_modules)(?:/|$) - [R=404,L,NC]
+RewriteRule ^(?:Agent\.md|README\.md|composer\.(?:json|lock)|package(?:-lock)?\.json|\.env(?:\.example)?|\.gitignore)$ - [R=404,L,NC]
+
+# Stop processing after an internal rewrite has entered the public directory.
+RewriteRule ^public(?:/|$) - [L]
+
+# Internally serve every public request from the public directory.
+RewriteRule ^$ public/ [L]
+RewriteRule ^(.+)$ public/$1 [L]
